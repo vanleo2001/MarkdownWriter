@@ -1,0 +1,5 @@
+[
+   { "caption": "-" },
+   { "caption": "Paste html or image", "command": "html2md" },
+   { "caption": "-" }
+]

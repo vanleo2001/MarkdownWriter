@@ -1,0 +1,1 @@
+{"version": "1.0", "platforms": ["windows"], "url": "", "sublime_text": "*", "dependencies": [], "description": "A plugin that enhance editing markdown, such as  converting HTML in clipboard to markdown, then paste it in sublime text"}
