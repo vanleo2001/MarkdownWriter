@@ -80,6 +80,13 @@ class SmartListCommand(sublime_plugin.TextCommand):
         for region in self.view.sel():
             self.view.show(region)
 
+class test(sublime_plugin.TextCommand):
+    def run(self,edit):
+        inlineimage = self.view.find_by_selector('markup.underline.link.image.markdown')
+        print('test')
+        for region in reversed(inlineimage):
+            url = self.view.substr(region)
+            print(url)
 
 
 class Html2mdCommand(sublime_plugin.TextCommand):
@@ -167,7 +174,7 @@ class Html2mdCommand(sublime_plugin.TextCommand):
                         # 从最后一个match开始修改。从前向后修改会导致view的内容改变，进而影响后面match的查找
                             url = self.view.substr(region)
 
-                            if url.startswith(('https://', 'http://')):
+                            if url.startswith(('https://', 'http://')) and url.find(('/ckeditor/'))<0:
                                 # images.append(url)
                                 try:
                                     # 获取最后一个img url位置，供popup使用
@@ -203,13 +210,19 @@ class Html2mdCommand(sublime_plugin.TextCommand):
                                     print("url error:",e)
                                 finally:
                                     f.close()
-                                print(url)
+                                print("Downloading:",url)
                         end = time.time()
-                        print("DL img time:",end-start)
+                        print("DownloadingImgTime:",end-start)
                         # regexp = "(?<!\[)!\[]\(.*\)]"
                         # regions = self.view.find_all(regexp)
                         # for region in  reversed(regions) :
                         #     self.view.insert(edit, region.a, "[")
+
+                        # delete icons ![](http://zd.sharegreat.cn/exy/Shared/ckeditor/plugins/SgFile/images/docx.png
+                        regexp2 = "!\[.*?]\(.*/ckeditor/(.*?\))"
+                        regions2 = self.view.find_all(regexp2)
+                        for region in  reversed(regions2) :
+                            self.view.erase(edit, region)
 
             else:
                 self.view.run_command('paste')

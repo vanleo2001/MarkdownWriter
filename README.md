@@ -1,5 +1,7 @@
-## What is it?
-It is a Sublime Text 3 (windows) plugin that make markdown text writing more easy.
+[Readme in Chinese is here](README_CN.md) [中文说明在此](README_CN.md)
+
+## Introduce
+**MarkdownWriter** is a Sublime Text 3 (windows) plugin that make markdown text writing more easy.
 
 ![](demo1.gif)
 
@@ -16,10 +18,10 @@ It is a Sublime Text 3 (windows) plugin that make markdown text writing more eas
 
 6. **smart list** When editing lists, you can just press <kbd>Enter</kbd> and this plugin will automatically continue the list. Once the content of the list becomes empty it will stop.
 
-7. **smart copy**
-When you take note from web, you can copy some content in web browser (such as Firefox), then use shortcut <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>V</kbd> to paste content in Markdown format into Subliem Text. If it has images in the content, it will auto download the image to local sub directory "media folder".
-When you copy some images in local harddisk, you can use shortcut <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>V</kbd> to insert the image links in Markdown format in Subliem Text, also the images will be stored into local sub directory "media folder".
-When you open one image, you can copy the image picture, then use shortcut <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>V</kbd> to insert the image link in Markdown format in Subliem Text, also the images will be stored into local sub directory "media folder".
+7. **smart paste**
+(1) When you take note from web, you can copy some content in web browser (such as Firefox), then use shortcut <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>V</kbd> (or click `Paste html or image` in contextmenu) to paste content in Markdown format into Subliem Text. If it has images in the content, it will auto download the image to local sub directory "media folder".
+(2) When you copy some images in local harddisk, you can use shortcut <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>V</kbd> to insert the image links in Markdown format in Subliem Text, also the images will be stored into local sub directory "media folder".
+(3) When you open one image, you can copy the image picture, then use shortcut <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>V</kbd> to insert the image link in Markdown format in Subliem Text, also the images will be stored into local sub directory "media folder".
 
 8. **show inlime image directly**
 You can manually install [MarkdownInlineImages plugin](https://github.com/math2001/MarkdownInlineImages), then use shortcut <kbd>Alt</kbd>+<kbd>I</kbd> to show images directly in Sublime Text.
@@ -35,5 +37,7 @@ You can manually install [MarkdownInlineImages plugin](https://github.com/math20
 
 
 ## Tips:
-1. If you want this plugin work good, you should set markdown syntax as "Markdown GFM" which is given in this plugin or [Markdown​Editing](https://packagecontrol.io/packages/MarkdownEditing) ![](demo2.png)
-2. I use Sublime Text 3 x86 version, so I use library `Pillow` x86 version in this plugin. If you use Sublime Text 3 x64 version, you can unpack ["PIL_x64.zip"](lib/PIL_x64.zip) and cover the "PIL" folder
+1. If you want this plugin work, you should set markdown syntax as "Markdown GFM" which is given in this plugin or [Markdown​Editing](https://packagecontrol.io/packages/MarkdownEditing) 
+![](demo2.png)
+2. I use Sublime Text 3 x86 version, so I use library `Pillow` x86 version in this plugin. If you use Sublime Text 3 x64 version, you can unpack ["PIL_x64.zip"](lib/PIL_x64.zip) and cover the "PIL" folder.
+3. You must install Sublime Text 3 version >= build 3118 to show image directly.
