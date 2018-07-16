@@ -11,7 +11,7 @@
 (2) When you copy some images in local harddisk, you can use shortcut <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>V</kbd> to insert the image links in Markdown format in Sublime Text, also the images will be stored into local sub directory "media folder".
 (3) When you open one image, you can copy the image picture, then use shortcut <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>V</kbd> to insert the image link in Markdown format in Sublime Text, also the images will be stored into local sub directory "media folder".
 
-2. **show inlime image directly**
+2. **show inline image directly**
 You can manually install [MarkdownInlineImages plugin](https://github.com/math2001/MarkdownInlineImages), then use shortcut <kbd>Alt</kbd>+<kbd>I</kbd> to show images directly in Sublime Text.
 
 3. **bold** You can select some content, use shortcut <kbd>Ctrl</kbd>+<kbd>B</kbd> to **Bold** it.
@@ -28,7 +28,7 @@ You can manually install [MarkdownInlineImages plugin](https://github.com/math20
 
 
 ## install
-1. manually install: download and unapck to "Sublime Text 3\Data\Packages\"， open file "Sublime Text 3\Data\Packages\User\Package Control.sublime-settings" with sublime text，add 
+1. manually install: download and unpack to "Sublime Text 3\Data\Packages\"， open file "Sublime Text 3\Data\Packages\User\Package Control.sublime-settings" with sublime text，add 
 ```
 "installed_packages":
     [
