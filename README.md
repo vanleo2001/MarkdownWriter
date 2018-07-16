@@ -28,7 +28,7 @@ You can manually install [MarkdownInlineImages plugin](https://github.com/math20
 
 
 ## install
-1. manually install: download and unapck to "Sublime Text 3\Data\Packages\"， oepn file "Sublime Text 3\Data\Packages\User\Package Control.sublime-settings" with sublime text，add 
+1. manually install: download and unapck to "Sublime Text 3\Data\Packages\"， open file "Sublime Text 3\Data\Packages\User\Package Control.sublime-settings" with sublime text，add 
 ```
 "installed_packages":
     [
