@@ -5,9 +5,9 @@
 
 ## 插件功能
 1. **智能粘贴**
-(1) 如果你需要从网页中复制内容并保存为markdown格式笔记，你可以在浏览器中先复制需要的内容，再在Sublime Text中按快捷键<kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>V</kbd> （或者鼠标右键菜单`Paste html or image`）进行粘贴，文本将自动转换为Markdown格式后粘贴，如果粘贴的文本中包含图片，图片会自动下载并保存在该md文件下"media"文件夹中。
-(2) 你可以在本地磁盘中copy一个或多个图像文件，再在Sublime Text中按快捷键<kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>V</kbd> （或者鼠标右键菜单`Paste html or image`）进行粘贴，图像文件将自动转换为Markdown格式的链接文本插入，图像文件会自动保存在该md文件下"media"文件夹中。
-(3) 你也可以打开一个图像文件后复制图像，再在Sublime Text中按快捷键<kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>V</kbd> （或者鼠标右键菜单`Paste html or image`）进行粘贴，图像将自动转换为Markdown格式后插入，图像文件也会自动保存在该md文件下"media"文件夹中。
+<br>(1) 如果你需要从网页中复制内容并保存为markdown格式笔记，你可以在浏览器中先复制需要的内容，再在Sublime Text中按快捷键<kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>V</kbd> （或者鼠标右键菜单`Paste html or image`）进行粘贴，文本将自动转换为Markdown格式后粘贴，如果粘贴的文本中包含图片，图片会自动下载并保存在该md文件下"media"文件夹中。
+<br>(2) 你可以在本地磁盘中copy一个或多个图像文件，再在Sublime Text中按快捷键<kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>V</kbd> （或者鼠标右键菜单`Paste html or image`）进行粘贴，图像文件将自动转换为Markdown格式的链接文本插入，图像文件会自动保存在该md文件下"media"文件夹中。
+<br>(3) 你也可以打开一个图像文件后复制图像，再在Sublime Text中按快捷键<kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>V</kbd> （或者鼠标右键菜单`Paste html or image`）进行粘贴，图像将自动转换为Markdown格式后插入，图像文件也会自动保存在该md文件下"media"文件夹中。
 
 2. **直接显示图像**
 借助插件[MarkdownInlineImages plugin](https://github.com/math2001/MarkdownInlineImages), 按快捷键<kbd>Alt</kbd>+<kbd>I</kbd>来直接显示/关闭图像.
