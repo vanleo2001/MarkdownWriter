@@ -1,0 +1,40 @@
+[
+    // Toggle bold
+    {
+        "keys": ["ctrl+alt+b"],
+        "command": "bold"
+    },
+    // toggle italic
+    {
+        "keys": ["ctrl+alt+i"],
+        "command": "italic"
+    },
+	{
+        "keys": ["ctrl+alt+2"],
+        "command": "head2"
+    },
+    {
+        "keys": ["ctrl+alt+3"],
+        "command": "head3"
+    },
+	{
+        "keys": ["ctrl+alt+4"],
+        "command": "head4"
+    },
+	{
+        "keys": ["ctrl+alt+v"],
+        "command": "html2md"
+    },
+	{ "keys": ["enter"], "command": "smart_list", "context":
+		[
+			{ "key": "selector", "operator": "equal", "operand": "text.html.markdown" },
+			{ "key": "preceding_text", "operator": "regex_contains", "operand": "^\\s*([-+\\**]|\\d+\\.+)\\s+" }
+		]
+	},
+	{ "keys": ["enter"], "command": "smart_list", "context":
+		[
+		    { "key": "selector", "operator": "equal", "operand": "text.html.markdown" },
+			{ "key": "selector", "operator": "equal", "operand": "markup.list" }
+		]
+	}
+]
