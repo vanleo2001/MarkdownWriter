@@ -7,22 +7,22 @@
 
 ## you can use it to do:
 1. **smart paste**
-(1) When you take note from web, you can copy some content in web browser (such as Firefox), then use shortcut <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>V</kbd> (or click `Paste html or image` in contextmenu) to paste content in Markdown format into Sublime Text. If it has images in the content, it will auto download the image to local sub directory "media folder".
-(2) When you copy some images in local harddisk, you can use shortcut <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>V</kbd> to insert the image links in Markdown format in Sublime Text, also the images will be stored into local sub directory "media folder".
-(3) When you open one image, you can copy the image picture, then use shortcut <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>V</kbd> to insert the image link in Markdown format in Sublime Text, also the images will be stored into local sub directory "media folder".
+(1) When you take note from web, you can copy some content in web browser (such as Firefox), then use shortcut <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>V</kbd> (or click `Paste html or image` in contextmenu) to paste content in Markdown format into Sublime Text. If it has images in the content, it will auto download the image to local sub directory "media folder".
+(2) When you copy some images in local harddisk, you can use shortcut <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>V</kbd> to insert the image links in Markdown format in Sublime Text, also the images will be stored into local sub directory "media folder".
+(3) When you open one image, you can copy the image picture, then use shortcut <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>V</kbd> to insert the image link in Markdown format in Sublime Text, also the images will be stored into local sub directory "media folder".
 
 2. **show inline image directly**
 You can manually install [MarkdownInlineImages plugin](https://github.com/math2001/MarkdownInlineImages), then use shortcut <kbd>Alt</kbd>+<kbd>I</kbd> to show images directly in Sublime Text.
 
-3. **bold** You can select some content, use shortcut <kbd>Ctrl</kbd>+<kbd>B</kbd> to **Bold** it.
+3. **bold** You can select some content, use shortcut <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>B</kbd> to **Bold** it.
 
-4. **italic** You can select some content, use shortcut <kbd>Ctrl</kbd>+<kbd>I</kbd> to **Italic** it.
+4. **italic** You can select some content, use shortcut <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>I</kbd> to **Italic** it.
 
-5. **headline2** Put the cursor in one line, use shortcut <kbd>Ctrl</kbd>+<kbd>2</kbd> to **add Headline2**.
+5. **headline2** Put the cursor in one line, use shortcut <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>2</kbd> to **add Headline2**.
 
-6. **headline3** Put the cursor in one line, use shortcut <kbd>Ctrl</kbd>+<kbd>3</kbd> to **add Headline3**.
+6. **headline3** Put the cursor in one line, use shortcut <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>3</kbd> to **add Headline3**.
 
-7. **headline4**  Put the cursor in one line, use shortcut <kbd>Ctrl</kbd>+<kbd>4</kbd> to **add Headline4**.
+7. **headline4**  Put the cursor in one line, use shortcut <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>4</kbd> to **add Headline4**.
 
 8. **smart list** When editing lists, you can just press <kbd>Enter</kbd> and this plugin will automatically continue the list. Once the content of the list becomes empty it will stop.
 
