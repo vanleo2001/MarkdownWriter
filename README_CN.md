@@ -22,7 +22,7 @@
 
 7. **添加四级标题** 光标定位到要加“标题格式”的行，按快捷键<kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>4</kbd>添加/去除Headline4格式。
 
-8. **智能列表** 进行列表编辑时， 按下回车键<kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Enter</kbd>后会自动插入有序列表的编号2. 3. 4. ...
+8. **智能列表** 进行列表编辑时， 按下回车键<kbd>Shift</kbd>+<kbd>Alt</kbd>+<kbd>Enter</kbd>后会自动插入有序列表的编号2. 3. 4. ...
 
 
 ## 安装
