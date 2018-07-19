@@ -25,13 +25,13 @@
         "keys": ["ctrl+alt+v"],
         "command": "html2md"
     },
-	{ "keys": ["enter"], "command": "smart_list", "context":
+	{ "keys": ["ctrl+alt+enter"], "command": "smart_list", "context":
 		[
 			{ "key": "selector", "operator": "equal", "operand": "text.html.markdown" },
 			{ "key": "preceding_text", "operator": "regex_contains", "operand": "^\\s*([-+\\**]|\\d+\\.+)\\s+" }
 		]
 	},
-	{ "keys": ["enter"], "command": "smart_list", "context":
+	{ "keys": ["ctrl+alt+enter"], "command": "smart_list", "context":
 		[
 		    { "key": "selector", "operator": "equal", "operand": "text.html.markdown" },
 			{ "key": "selector", "operator": "equal", "operand": "markup.list" }

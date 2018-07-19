@@ -24,7 +24,7 @@ You can manually install [MarkdownInlineImages plugin](https://github.com/math20
 
 7. **headline4**  Put the cursor in one line, use shortcut <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>4</kbd> to **add Headline4**.
 
-8. **smart list** When editing lists, you can just press <kbd>Enter</kbd> and this plugin will automatically continue the list. Once the content of the list becomes empty it will stop.
+8. **smart list** When editing lists, you can just press <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Enter</kbd> and this plugin will automatically continue the list. Once the content of the list becomes empty it will stop.
 
 
 ## install
