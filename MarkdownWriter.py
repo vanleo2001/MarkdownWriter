@@ -224,6 +224,11 @@ class Html2mdCommand(sublime_plugin.TextCommand):
                         for region in  reversed(regions2) :
                             self.view.erase(edit, region)
 
+                        regexp3 = "\r"
+                        regions3 = self.view.find_all(regexp3)
+                        for region in  reversed(regions3) :
+                            self.view.erase(edit, region)
+
             else:
                 self.view.run_command('paste')
 
