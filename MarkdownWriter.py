@@ -7,12 +7,78 @@ import time
 import urllib.request
 import imghdr
 from . import html2text
-import win32clipboard
-import win32con
 from . import HtmlClipboard
 from imp import reload
 # import hashlib
 from zlib import crc32
+import ctypes.wintypes
+from ctypes import windll, create_unicode_buffer, c_void_p, c_uint, c_wchar_p
+
+# Clipboard Formats
+CF_TEXT = 1
+CF_BITMAP = 2
+CF_METAFILEPICT = 3
+CF_SYLK = 4
+CF_DIF = 5
+CF_TIFF = 6
+CF_OEMTEXT = 7
+CF_DIB = 8
+CF_PALETTE = 9
+CF_PENDATA = 10
+CF_RIFF = 11
+CF_WAVE = 12
+CF_UNICODETEXT = 13
+CF_ENHMETAFILE = 14
+CF_HDROP = 15
+CF_LOCALE = 16
+CF_DIBV5 = 17
+CF_MAX = 18
+CF_OWNERDISPLAY = 0x0080
+CF_DSPTEXT = 0x0081
+CF_DSPBITMAP = 0x0082
+CF_DSPMETAFILEPICT = 0x0083
+CF_DSPENHMETAFILE = 0x008E
+CF_PRIVATEFIRST = 0x0200
+CF_PRIVATELAST = 0x02FF
+CF_GDIOBJFIRST = 0x0300
+CF_GDIOBJLAST = 0x03FF
+
+RegisterClipboardFormat = ctypes.windll.user32.RegisterClipboardFormatW
+RegisterClipboardFormat.argtypes = ctypes.wintypes.LPWSTR,
+RegisterClipboardFormat.restype = ctypes.wintypes.UINT
+CF_HTML = RegisterClipboardFormat('HTML Format')
+
+EnumClipboardFormats = ctypes.windll.user32.EnumClipboardFormats
+EnumClipboardFormats.argtypes = ctypes.wintypes.UINT,
+EnumClipboardFormats.restype = ctypes.wintypes.UINT
+
+GetClipboardData = ctypes.windll.user32.GetClipboardData
+GetClipboardData.argtypes = ctypes.wintypes.UINT,
+GetClipboardData.restype = ctypes.wintypes.HANDLE
+
+SetClipboardData = ctypes.windll.user32.SetClipboardData
+SetClipboardData.argtypes = ctypes.wintypes.UINT, ctypes.wintypes.HANDLE
+SetClipboardData.restype = ctypes.wintypes.HANDLE
+
+OpenClipboard = ctypes.windll.user32.OpenClipboard
+OpenClipboard.argtypes = ctypes.wintypes.HANDLE,
+OpenClipboard.restype = ctypes.wintypes.BOOL
+
+IsClipboardFormatAvailable = ctypes.windll.user32.IsClipboardFormatAvailable
+
+CloseClipboard = ctypes.windll.user32.CloseClipboard
+CloseClipboard.restype = ctypes.wintypes.BOOL
+
+DragQueryFile = ctypes.windll.shell32.DragQueryFileW
+DragQueryFile.argtypes = [c_void_p, c_uint, c_wchar_p, c_uint]
+
+GlobalLock = ctypes.windll.kernel32.GlobalLock
+GlobalLock.argtypes = [c_void_p]
+GlobalLock.restype = c_void_p
+
+GlobalUnlock = ctypes.windll.kernel32.GlobalUnlock
+GlobalUnlock.argtypes = [c_void_p]
+
 
 print(sys.getdefaultencoding())
 reload(sys)
@@ -125,16 +191,31 @@ class Html2mdCommand(sublime_plugin.TextCommand):
 
 
         # 直接复制image文件并直接插入md中
-        if win32clipboard.IsClipboardFormatAvailable(win32clipboard.CF_HDROP):
-            win32clipboard.OpenClipboard()
-            files=win32clipboard.GetClipboardData(win32clipboard.CF_HDROP)
-            win32clipboard.CloseClipboard()
-            lenfile=len(files)
-            print("lenfile", lenfile)
+        if IsClipboardFormatAvailable(CF_HDROP):
+            print("paste image file list")
+
+            # get clipboard files path list
+            file_list = []
+            OpenClipboard(0)
+            FilesHandle=GetClipboardData(CF_HDROP)
+            hDrop = GlobalLock(FilesHandle)
+            count = DragQueryFile(hDrop, 0xFFFFFFFF, None, 0)
+            for i in range(count):
+                length = DragQueryFile(hDrop, i, None, 0)
+                buffer = create_unicode_buffer(length)
+                DragQueryFile(hDrop, i, buffer, length + 1)
+                file_list.append(buffer.value)
+            GlobalUnlock(FilesHandle)
+            CloseClipboard()
+            # print(file_list)
+
+            lenfile=len(file_list)
+            # print("lenfile", lenfile)
+
             filelist=""
             if lenfile>0:
                 for i in range(0, lenfile):
-                    fn=files[i]
+                    fn=file_list[i]
                     if fn.split(".")[-1] in ("png" , "jpg", "jpeg", "gif"):
                         infile = open(fn,"rb")
                         infilebuffer=infile.read()
@@ -146,16 +227,18 @@ class Html2mdCommand(sublime_plugin.TextCommand):
                 for region in self.view.sel():
                     self.view.insert(edit, region.a, filelist)
 
-        elif win32clipboard.IsClipboardFormatAvailable(win32clipboard.CF_TEXT):
-            # win32clipboard.OpenClipboard()
-            # clipboard = win32clipboard.GetClipboardData()
-            # win32clipboard.CloseClipboard()
+        elif IsClipboardFormatAvailable(CF_TEXT):
+            # OpenClipboard(0)
+            # clipboard = GetClipboardData()
+            # CloseClipboard()
+            print("paste CF_TEXT")
 
             if HtmlClipboard.HasHtml():
+                print("paste html")
             	# HtmlClipboard.DumpHtml()
-            	HTML = HtmlClipboard.GetHtml()
-            	text = html2text.html2text(HTML)
-            	if text != None:
+                HTML = HtmlClipboard.GetHtml()
+                text = html2text.html2text(HTML)
+                if text != None:
                     for region in self.view.sel():
                         self.view.insert(edit, region.a, text)
 
@@ -218,7 +301,7 @@ class Html2mdCommand(sublime_plugin.TextCommand):
                         # for region in  reversed(regions) :
                         #     self.view.insert(edit, region.a, "[")
 
-                        # delete icons ![](http://zd.sharegreat.cn/exy/Shared/ckeditor/plugins/SgFile/images/docx.png
+                        # delete icons ![](http://www.site.com/Shared/ckeditor/plugins/SgFile/images/docx.png
                         regexp2 = "!\[.*?]\(.*/ckeditor/(.*?\))"
                         regions2 = self.view.find_all(regexp2)
                         for region in  reversed(regions2) :
@@ -229,20 +312,26 @@ class Html2mdCommand(sublime_plugin.TextCommand):
                         for region in  reversed(regions3) :
                             self.view.erase(edit, region)
 
+                        regexp4 = "\n\n\n"
+                        regions4 = self.view.find_all(regexp4)
+                        for region in  reversed(regions4) :
+                            self.view.replace(edit, region, '\n\n')
+
             else:
                 self.view.run_command('paste')
 
-        elif win32clipboard.IsClipboardFormatAvailable(win32clipboard.CF_DIB):
+        elif IsClipboardFormatAvailable(CF_DIB):
 
             # calculate imagehash = md5(imgfile in clipboard)
-            win32clipboard.OpenClipboard()
-            clipboard = win32clipboard.GetClipboardData(win32clipboard.CF_DIB)
+            OpenClipboard(0)
+            ClipboardHandle = GetClipboardData(CF_DIB)
+            clipboard = ctypes.c_char_p(ClipboardHandle).value
             # hasher = hashlib.md5()
             # hasher.update(clipboard)
             # imagehash=hasher.hexdigest()
             imagehash = crc32(clipboard)
             print(imagehash)
-            win32clipboard.CloseClipboard()
+            CloseClipboard()
 
             # relative file path
             rel_filename = os.path.join(
@@ -285,8 +374,7 @@ class ItalicCommand(sublime_plugin.TextCommand):
         for region in selection:
             region_text = self.view.substr(region)
             if len(region_text) > 1 and region_text[0:1] == "_" and region_text[len(region_text) - 1:len(region_text)] == "_":
-                self.view.replace(edit, region, region_text[
-                                  1:len(region_text) - 1])
+                self.view.replace(edit, region, region_text[1:len(region_text) - 1])
             else:
                 self.view.replace(edit, region, '_' + region_text + '_')
 

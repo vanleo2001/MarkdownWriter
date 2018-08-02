@@ -3,7 +3,8 @@ Modified on July 10, 2018
 
 @author: vanleo2001
 
-The original source will count length of Chinese word  incorrectly. So I correct it.
+1. The original source will count length of Chinese word incorrectly. So I correct it.
+2. For reducing the size of dependency in Sublime Text 3, I replace the library pywin32 with ctypes
 
 
 original: http://code.activestate.com/recipes/474121/
@@ -19,7 +20,62 @@ original: http://code.activestate.com/recipes/474121/
 import re
 import time
 import random
-import win32clipboard
+import ctypes.wintypes
+
+# Clipboard Formats
+CF_TEXT = 1
+CF_BITMAP = 2
+CF_METAFILEPICT = 3
+CF_SYLK = 4
+CF_DIF = 5
+CF_TIFF = 6
+CF_OEMTEXT = 7
+CF_DIB = 8
+CF_PALETTE = 9
+CF_PENDATA = 10
+CF_RIFF = 11
+CF_WAVE = 12
+CF_UNICODETEXT = 13
+CF_ENHMETAFILE = 14
+CF_HDROP = 15
+CF_LOCALE = 16
+CF_DIBV5 = 17
+CF_MAX = 18
+CF_OWNERDISPLAY = 0x0080
+CF_DSPTEXT = 0x0081
+CF_DSPBITMAP = 0x0082
+CF_DSPMETAFILEPICT = 0x0083
+CF_DSPENHMETAFILE = 0x008E
+CF_PRIVATEFIRST = 0x0200
+CF_PRIVATELAST = 0x02FF
+CF_GDIOBJFIRST = 0x0300
+CF_GDIOBJLAST = 0x03FF
+
+RegisterClipboardFormat = ctypes.windll.user32.RegisterClipboardFormatW
+RegisterClipboardFormat.argtypes = ctypes.wintypes.LPWSTR,
+RegisterClipboardFormat.restype = ctypes.wintypes.UINT
+CF_HTML = RegisterClipboardFormat('HTML Format')
+
+EnumClipboardFormats = ctypes.windll.user32.EnumClipboardFormats
+EnumClipboardFormats.argtypes = ctypes.wintypes.UINT,
+EnumClipboardFormats.restype = ctypes.wintypes.UINT
+
+GetClipboardData = ctypes.windll.user32.GetClipboardData
+GetClipboardData.argtypes = ctypes.wintypes.UINT,
+GetClipboardData.restype = ctypes.wintypes.HANDLE
+
+SetClipboardData = ctypes.windll.user32.SetClipboardData
+SetClipboardData.argtypes = ctypes.wintypes.UINT, ctypes.wintypes.HANDLE
+SetClipboardData.restype = ctypes.wintypes.HANDLE
+
+OpenClipboard = ctypes.windll.user32.OpenClipboard
+OpenClipboard.argtypes = ctypes.wintypes.HANDLE,
+OpenClipboard.restype = ctypes.wintypes.BOOL
+
+IsClipboardFormatAvailable = ctypes.windll.user32.IsClipboardFormatAvailable
+
+CloseClipboard = ctypes.windll.user32.CloseClipboard
+CloseClipboard.restype = ctypes.wintypes.BOOL
 
 #---------------------------------------------------------------------------
 #  Convenience functions to do the most common operation
@@ -105,7 +161,7 @@ class HtmlClipboard:
         Return the FORMATID of the HTML format
         """
         if self.CF_HTML is None:
-            self.CF_HTML = win32clipboard.RegisterClipboardFormat("HTML Format")
+            self.CF_HTML = RegisterClipboardFormat("HTML Format")
 
         return self.CF_HTML
 
@@ -116,13 +172,13 @@ class HtmlClipboard:
         """
         formats = []
         try:
-            win32clipboard.OpenClipboard(0)
-            cf = win32clipboard.EnumClipboardFormats(0)
+            OpenClipboard(0)
+            cf = EnumClipboardFormats(0)
             while (cf != 0):
                 formats.append(cf)
-                cf = win32clipboard.EnumClipboardFormats(cf)
+                cf = EnumClipboardFormats(cf)
         finally:
-            win32clipboard.CloseClipboard()
+            CloseClipboard()
 
         return formats
 
@@ -144,15 +200,16 @@ class HtmlClipboard:
         cbOpened = False
         while not cbOpened:
             try:
-                win32clipboard.OpenClipboard(0)
-                src = win32clipboard.GetClipboardData(self.GetCfHtml())
+                OpenClipboard(0)
+                SrcHandle = GetClipboardData(self.GetCfHtml())
+                src = ctypes.c_char_p(SrcHandle).value
                 src = src.decode("UTF-8")
-                # print(src)
+                # print("src is",src)
                 self.DecodeClipboardSource(src)
 
                 cbOpened = True
 
-                win32clipboard.CloseClipboard()
+                CloseClipboard()
             except Exception as err:
                 # If access is denied, that means that the clipboard is in use.
                 # Keep trying until it's available.
@@ -267,14 +324,14 @@ class HtmlClipboard:
         """
 
         try:
-            win32clipboard.OpenClipboard(0)
-            win32clipboard.EmptyClipboard()
+            OpenClipboard(0)
+            EmptyClipboard()
             src = self.EncodeClipboardSource(html, fragmentStart, fragmentEnd, selectionStart, selectionEnd, source)
-            src = src.encode("UTF-8")
+            # src = src.encode("UTF-8")
             #print(src)
-            win32clipboard.SetClipboardData(self.GetCfHtml(), src)
+            SetClipboardData(self.GetCfHtml(), src)
         finally:
-            win32clipboard.CloseClipboard()
+            CloseClipboard()
 
 
     def EncodeClipboardSource(self, html, fragmentStart, fragmentEnd, selectionStart, selectionEnd, source):
