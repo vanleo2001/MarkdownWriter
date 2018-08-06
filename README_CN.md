@@ -36,6 +36,9 @@
 
 
 ## Tips:
-1. 我使用的是Sublime Text 3 32位版本, 所以本插件需要的library `Pillow`也是32位版本。如果你使用64位版本的Sublime Text 3，你需要将插件包中lib文件夹下的["PIL_x64.zip"](lib/PIL_x64.zip)解压，并覆盖32位版本的"PIL"文件夹。
+1. 为了正确使用本插件和MarkdownInlineImages插件, 需要设置markdown的syntax语法文件为"Markdown GFM"，我在插件包中提供了该文件；插件[Markdown​Editing](https://packagecontrol.io/packages/MarkdownEditing)也提供了相同的语法文件。Markdown syntax设置见下图：
+![](demo2.png)
 
-2. 为了使用sublime text 3的“直接显示图像“插件，Sublime Text 3最低需要build 3118版本。
+2. 我使用的是Sublime Text 3 32位版本, 所以本插件需要的library `Pillow`也是32位版本。如果你使用64位版本的Sublime Text 3，你需要将插件包中lib文件夹下的["PIL_x64.zip"](lib/PIL_x64.zip)解压，并覆盖32位版本的"PIL"文件夹。
+
+3. 为了使用sublime text 3的直接显示图像功能，Sublime Text 3最低需要build 3118版本。
