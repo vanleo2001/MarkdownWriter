@@ -28,7 +28,7 @@ You can manually install [MarkdownInlineImages plugin](https://github.com/math20
 
 
 ## install
-1. manually install: download and unpack to "Sublime Text 3\Data\Packages\"， open file "Sublime Text 3\Data\Packages\User\Package Control.sublime-settings" with sublime text，add 
+1. manually install: download and unpack to "Sublime Text 3\Data\Packages\"， open file "Sublime Text 3\Data\Packages\User\Package Control.sublime-settings" with sublime text，add
 ```
 "installed_packages":
     [
@@ -38,7 +38,5 @@ You can manually install [MarkdownInlineImages plugin](https://github.com/math20
 
 
 ## Tips:
-1. If you want this plugin work, you should set markdown syntax as "Markdown GFM" which is given in this plugin or [Markdown​Editing](https://packagecontrol.io/packages/MarkdownEditing) 
-![](demo2.png)
-2. I use Sublime Text 3 x86 version, so I use library `Pillow` x86 version in this plugin. If you use Sublime Text 3 x64 version, you can unpack ["PIL_x64.zip"](lib/PIL_x64.zip) and cover the "PIL" folder.
-3. You must install Sublime Text 3 version >= build 3118 to show image directly.
+1. I use Sublime Text 3 x86 version, so I use library `Pillow` x86 version in this plugin. If you use Sublime Text 3 x64 version, you can unpack ["PIL_x64.zip"](lib/PIL_x64.zip) and cover the "PIL" folder.
+2. You must install Sublime Text 3 version >= build 3118 to show image directly.

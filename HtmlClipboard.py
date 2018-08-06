@@ -204,7 +204,6 @@ class HtmlClipboard:
                 SrcHandle = GetClipboardData(self.GetCfHtml())
                 src = ctypes.c_char_p(SrcHandle).value
                 src = src.decode("UTF-8")
-                # print("src is",src)
                 self.DecodeClipboardSource(src)
 
                 cbOpened = True
@@ -327,8 +326,7 @@ class HtmlClipboard:
             OpenClipboard(0)
             EmptyClipboard()
             src = self.EncodeClipboardSource(html, fragmentStart, fragmentEnd, selectionStart, selectionEnd, source)
-            # src = src.encode("UTF-8")
-            #print(src)
+            src = src.encode("UTF-8")
             SetClipboardData(self.GetCfHtml(), src)
         finally:
             CloseClipboard()
