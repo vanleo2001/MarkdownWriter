@@ -294,6 +294,28 @@ class Html2mdCommand(sublime_plugin.TextCommand):
                     view.insert(edit, pos.begin(), "%s" % rel_filename)
 
 
+    def is_enabled(self):
+        # get filename
+        view = self.view
+        filename = view.file_name()
+        # create dir in current path with the name of current filename
+        dirname, fileext = os.path.splitext(filename)
+        if fileext.lower()==(".md") or fileext.lower()==(".markdown"):
+            return True
+        else:
+            return False
+
+    def is_visible(self):
+        # get filename
+        view = self.view
+        filename = view.file_name()
+        # create dir in current path with the name of current filename
+        dirname, fileext = os.path.splitext(filename)
+        if fileext.lower()==(".md") or fileext.lower()==(".markdown"):
+            return True
+        else:
+            return False
+
 class BoldCommand(sublime_plugin.TextCommand):
 
     def run(self, edit):
