@@ -108,6 +108,17 @@ def PutHtml(fragment):
     cb.PutFragment(fragment)
 
 
+def GetCfHtml():
+    """
+    Return the FORMATID of the HTML format
+    """
+    global CF_HTML
+    if CF_HTML is None:
+        CF_HTML = RegisterClipboardFormat("HTML Format")
+
+    return CF_HTML
+
+
 #---------------------------------------------------------------------------
 
 class HtmlClipboard:
@@ -181,6 +192,7 @@ class HtmlClipboard:
             CloseClipboard()
 
         return formats
+
 
 
     def HasHtmlFormat(self):

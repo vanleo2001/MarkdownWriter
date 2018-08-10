@@ -79,6 +79,10 @@ GlobalLock.restype = c_void_p
 GlobalUnlock = ctypes.windll.kernel32.GlobalUnlock
 GlobalUnlock.argtypes = [c_void_p]
 
+GlobalSize = ctypes.windll.kernel32.GlobalSize
+GlobalSize.argtypes = ctypes.wintypes.HGLOBAL,
+GlobalSize.restype = ctypes.c_size_t
+
 
 ORDER_LIST_PATTERN = re.compile(r"(\s*)(\d+)(\.\s+)\S+")
 UNORDER_LIST_PATTERN = re.compile(r"(\s*[-+\**]+)(\s+)\S+")
@@ -87,7 +91,64 @@ EMPTY_LIST_PATTERN = re.compile(r"(\s*([-+\**]|\d+\.+))\s+$")
 
 class test(sublime_plugin.TextCommand):
     def run(self,edit):
-        tmpstr = "test"
+        print("TEST")
+
+        self.settings = sublime.load_settings('markdownwriter.sublime-settings')
+        # get the image save dirname
+        self.image_dir_name = self.settings.get('image_dir_name', None)
+        if len(self.image_dir_name) == 0:
+            self.image_dir_name = None
+
+        # get filename
+        view = self.view
+        filename = view.file_name()
+        # create dir in current path with the name of current filename
+        dirname, fileext = os.path.splitext(filename)
+
+        # create new image file under currentdir/filename_without_ext/filename_without_ext%d.png
+        fn_without_ext = os.path.basename(dirname)
+        if self.image_dir_name is not None:
+            subdir_name = os.path.join(os.path.split(dirname)[0], self.image_dir_name)
+        else:
+            subdir_name = dirname
+        if not os.path.lexists(subdir_name):
+            os.mkdir(subdir_name)
+
+        if IsClipboardFormatAvailable(CF_DIB):
+
+            OpenClipboard(0)
+            try:
+                hBITMAP = GetClipboardData(CF_BITMAP)
+                hDIBV5 = GetClipboardData(CF_DIBV5)
+                sDIBV5 = GlobalSize(hDIBV5)
+                hDIB = GetClipboardData(CF_DIB)
+                pDIB = GlobalLock(hDIB)
+                sDIB = GlobalSize(hDIB)
+                # print(pDIB, hex(sDIB))
+                if pDIB and sDIB:
+                    raw_data = ctypes.create_string_buffer(sDIB)
+                    ctypes.memmove(raw_data, pDIB, sDIB)
+                    # print(raw_data[0:31])
+                    imagehash = crc32(raw_data)
+                else:
+                    return
+                GlobalUnlock(hDIB)
+            finally:
+                CloseClipboard()
+
+            # relative file path
+            rel_filename = os.path.join(
+                "%s/%d.png" % (self.image_dir_name if self.image_dir_name else fn_without_ext, imagehash))
+            # absolute file path
+            abs_filename = os.path.join(subdir_name, "%d.png" % (imagehash))
+
+            im = ImageGrab.grabclipboard()
+            im.save(abs_filename, 'PNG')
+            for pos in view.sel():
+                if 'text.html.markdown' in view.scope_name(pos.begin()):
+                    view.insert(edit, pos.begin(), "![](%s)" % rel_filename)
+                else:
+                    view.insert(edit, pos.begin(), "%s" % rel_filename)
 
 
 class SmartListCommand(sublime_plugin.TextCommand):
@@ -161,9 +222,85 @@ class Html2mdCommand(sublime_plugin.TextCommand):
         if not os.path.lexists(subdir_name):
             os.mkdir(subdir_name)
 
+        # ss = HtmlClipboard.GetCfHtml()
+        # if IsClipboardFormatAvailable(ss):
+        #     continue
 
-        # copy image files and insert into MD
-        if IsClipboardFormatAvailable(CF_HDROP):
+        if HtmlClipboard.HasHtml():
+            HTML = HtmlClipboard.GetHtml()
+            text = html2text.html2text(HTML)
+            if text != None:
+                for region in self.view.sel():
+                    self.view.insert(edit, region.a, text)
+
+                self.r2l = self.settings.get('remoteimage_as_localimage', None)
+                if self.r2l == "true":
+                    start = time.time()
+
+                    inlineimage = self.view.find_by_selector('markup.underline.link.image.markdown')
+                    aa=0
+                    for region in reversed(inlineimage):
+                        url = self.view.substr(region)
+
+                        if url.startswith(('https://', 'http://')) and url.find(('/ckeditor/'))<0:
+                            try:
+                                if aa==0:
+                                    bb=region.a
+                                aa=aa+1
+
+                                req = urllib.request.Request(url, data=None, headers={"User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36"})
+                                with urllib.request.urlopen(req) as f:
+                                    mybytes = f.read()
+                                    imagehash = str(crc32(mybytes))
+
+                                    if f.getheader("Content-Type")=="image/png":
+                                        output = open(subdir_name+"/"+imagehash+".png","wb")
+                                        output.write(mybytes)
+                                        output.close()
+                                        self.view.replace(edit,region, self.image_dir_name+"/"+imagehash+'.png "'+url+'"')
+                                    elif f.getheader("Content-Type")=="image/jpeg":
+                                        output = open(subdir_name+"/"+imagehash+".jpg","wb")
+                                        output.write(mybytes)
+                                        output.close()
+                                        self.view.replace(edit,region, self.image_dir_name+"/"+imagehash+'.jpg "'+url+'"')
+                                    elif f.getheader("Content-Type")=="image/gif":
+                                        output = open(subdir_name+"/"+imagehash+".gif","wb")
+                                        output.write(mybytes)
+                                        output.close()
+                                        self.view.replace(edit,region, self.image_dir_name+"/"+imagehash+'.gif "'+url+'"')
+                                    popup=str(aa)+"<a> Images download</a>"
+                                    view.show_popup(popup, flags=sublime.HIDE_ON_MOUSE_MOVE_AWAY, location=bb, max_width=1500, max_height=500)
+                            except (urllib.error.HTTPError, urllib.error.URLError) as e:
+                                print("url error:",e)
+                            finally:
+                                f.close()
+                    end = time.time()
+
+                    # delete icons ![](http://www.xxx.com/Shared/ckeditor/plugins/SgFile/images/docx.png
+                    regexp2 = "!\[.*?]\(.*/ckeditor/(.*?\))"
+                    regions2 = self.view.find_all(regexp2)
+                    for region in  reversed(regions2) :
+                        self.view.erase(edit, region)
+
+                    regexp3 = "\r"
+                    regions3 = self.view.find_all(regexp3)
+                    for region in  reversed(regions3) :
+                        self.view.erase(edit, region)
+
+                    regexp4 = "\n\n\n"
+                    regions4 = self.view.find_all(regexp4)
+                    for region in  reversed(regions4) :
+                        self.view.replace(edit, region, '\n\n')
+
+
+
+        elif IsClipboardFormatAvailable(CF_TEXT):
+            self.view.run_command('paste')
+
+
+
+        # copy image file list and insert into MD
+        elif IsClipboardFormatAvailable(CF_HDROP):
             # get clipboard files path list
             file_list = []
             OpenClipboard(0)
@@ -198,84 +335,26 @@ class Html2mdCommand(sublime_plugin.TextCommand):
                     self.view.insert(edit, region.a, filelist)
 
 
-        elif IsClipboardFormatAvailable(CF_TEXT):
-            if HtmlClipboard.HasHtml():
-                HTML = HtmlClipboard.GetHtml()
-                text = html2text.html2text(HTML)
-                if text != None:
-                    for region in self.view.sel():
-                        self.view.insert(edit, region.a, text)
-
-                    self.r2l = self.settings.get('remoteimage_as_localimage', None)
-                    if self.r2l == "true":
-                        start = time.time()
-
-                        inlineimage = self.view.find_by_selector('markup.underline.link.image.markdown')
-                        aa=0
-                        for region in reversed(inlineimage):
-                            url = self.view.substr(region)
-
-                            if url.startswith(('https://', 'http://')) and url.find(('/ckeditor/'))<0:
-                                try:
-                                    if aa==0:
-                                        bb=region.a
-                                    aa=aa+1
-
-                                    req = urllib.request.Request(url, data=None, headers={"User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36"})
-                                    with urllib.request.urlopen(req) as f:
-                                        mybytes = f.read()
-                                        imagehash = str(crc32(mybytes))
-
-                                        if f.getheader("Content-Type")=="image/png":
-                                            output = open(subdir_name+"/"+imagehash+".png","wb")
-                                            output.write(mybytes)
-                                            output.close()
-                                            self.view.replace(edit,region, self.image_dir_name+"/"+imagehash+'.png "'+url+'"')
-                                        elif f.getheader("Content-Type")=="image/jpeg":
-                                            output = open(subdir_name+"/"+imagehash+".jpg","wb")
-                                            output.write(mybytes)
-                                            output.close()
-                                            self.view.replace(edit,region, self.image_dir_name+"/"+imagehash+'.jpg "'+url+'"')
-                                        elif f.getheader("Content-Type")=="image/gif":
-                                            output = open(subdir_name+"/"+imagehash+".gif","wb")
-                                            output.write(mybytes)
-                                            output.close()
-                                            self.view.replace(edit,region, self.image_dir_name+"/"+imagehash+'.gif "'+url+'"')
-                                        popup=str(aa)+"<a> Images download</a>"
-                                        view.show_popup(popup, flags=sublime.HIDE_ON_MOUSE_MOVE_AWAY, location=bb, max_width=1500, max_height=500)
-                                except (urllib.error.HTTPError, urllib.error.URLError) as e:
-                                    print("url error:",e)
-                                finally:
-                                    f.close()
-                        end = time.time()
-
-                        # delete icons ![](http://www.xxx.com/Shared/ckeditor/plugins/SgFile/images/docx.png
-                        regexp2 = "!\[.*?]\(.*/ckeditor/(.*?\))"
-                        regions2 = self.view.find_all(regexp2)
-                        for region in  reversed(regions2) :
-                            self.view.erase(edit, region)
-
-                        regexp3 = "\r"
-                        regions3 = self.view.find_all(regexp3)
-                        for region in  reversed(regions3) :
-                            self.view.erase(edit, region)
-
-                        regexp4 = "\n\n\n"
-                        regions4 = self.view.find_all(regexp4)
-                        for region in  reversed(regions4) :
-                            self.view.replace(edit, region, '\n\n')
-
-            else:
-                self.view.run_command('paste')
-
 
         elif IsClipboardFormatAvailable(CF_DIB):
 
             OpenClipboard(0)
             try:
-                ClipboardHandle = GetClipboardData(CF_DIB)
-                clipboard = ctypes.c_void_p(ClipboardHandle).value
-                imagehash = crc32(clipboard)
+                hBITMAP = GetClipboardData(CF_BITMAP)
+                hDIBV5 = GetClipboardData(CF_DIBV5)
+                sDIBV5 = GlobalSize(hDIBV5)
+                hDIB = GetClipboardData(CF_DIB)
+                pDIB = GlobalLock(hDIB)
+                sDIB = GlobalSize(hDIB)
+                # print(pDIB, hex(sDIB))
+                if pDIB and sDIB:
+                    raw_data = ctypes.create_string_buffer(sDIB)
+                    ctypes.memmove(raw_data, pDIB, sDIB)
+                    # print(raw_data[0:31])
+                    imagehash = crc32(raw_data)
+                else:
+                    return
+                GlobalUnlock(hDIB)
             finally:
                 CloseClipboard()
 
